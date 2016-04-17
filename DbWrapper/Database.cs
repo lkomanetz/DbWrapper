@@ -172,12 +172,17 @@ namespace DbWrapper {
 		internal static List<TableConstraintInfo> GetTableConstraints(string table) {
 			List<TableConstraintInfo> list = new List<TableConstraintInfo>();
 			_conn.Open();
-			DataTable fKeys = _conn.GetSchema("indexes",
-												new string[] { null, null, table, null });
-			DataTable pKeys = _conn.GetSchema("indexes",
-												new string[] { null, null, table, null });
+			DataTable fKeys = _conn.GetSchema(
+				"indexes",
+				new string[] { null, null, table, null }
+			);
+			DataTable pKeys = _conn.GetSchema(
+				"indexes",
+				new string[] { null, null, table, null }
+			);
 			_conn.Close();
 
+			// TODO(Logan): Have two threads going at the same time and join them together.
 			/*
 			 * Go through the data table and get the foreign key information
 			 */
