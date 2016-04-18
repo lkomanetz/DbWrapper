@@ -12,10 +12,10 @@ using DbWrapper.Serializer;
 
 namespace TestApp
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
+	class Program
+	{
+		static void Main(string[] args)
+		{
 			//Database db = new Database("208.107.242.5",
 			//						   "videostore",
 			//						   DatabaseEngine.MySQL,
@@ -34,7 +34,7 @@ namespace TestApp
 			//if (rec.Next()) {
 			//	Console.WriteLine(rec.Get<string>("Title"));
 			//}
-			Database db = new Database("208.107.242.5",
+			Database db = new Database("140.186.94.50",
 										"FusionDB",
 										DatabaseEngine.SqlServer,
 										"Fusion_SA",
@@ -46,89 +46,89 @@ namespace TestApp
 						"CreatedBy",
 						JoinType.Inner);
 			rec.Read();
-            Console.ReadLine();
-        //    TimeSpan elapsedTime = new TimeSpan();
+			Console.ReadLine();
+		//    TimeSpan elapsedTime = new TimeSpan();
 
-        //    for (short i = 0; i < 50; i++)
-        //    {
-        //        Stopwatch entireTime = new Stopwatch();
-        //        entireTime.Start();
-        //        Stopwatch watch = new Stopwatch();
-        //        watch.Start();
-        //        Database db = new Database("208.107.242.5",
-        //                                    "MobileTimePunch",
-        //                                    "SQL Server",
-        //                                    "MobileTimePunch_SA",
-        //                                    "Passw0rd");
-        //        Record.SearchProperty = "ID";
+		//    for (short i = 0; i < 50; i++)
+		//    {
+		//        Stopwatch entireTime = new Stopwatch();
+		//        entireTime.Start();
+		//        Stopwatch watch = new Stopwatch();
+		//        watch.Start();
+		//        Database db = new Database("208.107.242.5",
+		//                                    "MobileTimePunch",
+		//                                    "SQL Server",
+		//                                    "MobileTimePunch_SA",
+		//                                    "Passw0rd");
+		//        Record.SearchProperty = "ID";
 
-        //        try
-        //        {
-        //            Record rec = new Record("schedule", db);
-        //            rec.AddQuery("user_id/=/" + 1);
-        //            rec.Read();
+		//        try
+		//        {
+		//            Record rec = new Record("schedule", db);
+		//            rec.AddQuery("user_id/=/" + 1);
+		//            rec.Read();
 
-        //            while (rec.Next())
-        //            {
-        //                TimeSpan span = rec.Get<TimeSpan>("schedule_time");
-        //                Console.WriteLine(String.Format("Retrieved Value: {0}", span));
-        //            }
-        //            watch.Stop();
-        //            Console.WriteLine("Read Time: " + watch.Elapsed);
-        //            //Console.ReadLine();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            throw ex;
-        //        }
-        //        watch.Reset();
-        //        watch.Start();
+		//            while (rec.Next())
+		//            {
+		//                TimeSpan span = rec.Get<TimeSpan>("schedule_time");
+		//                Console.WriteLine(String.Format("Retrieved Value: {0}", span));
+		//            }
+		//            watch.Stop();
+		//            Console.WriteLine("Read Time: " + watch.Elapsed);
+		//            //Console.ReadLine();
+		//        }
+		//        catch (Exception ex)
+		//        {
+		//            throw ex;
+		//        }
+		//        watch.Reset();
+		//        watch.Start();
 
-        //        Record createRec = new Record("user", db);
-        //        createRec.Set<string>("first_name", "First Name");
-        //        createRec.Set<string>("last_name", "Last Name");
-        //        createRec.Set<string>("username", "fname");
-        //        createRec.Set<string>("password", "pass");
-        //        createRec.Create();
+		//        Record createRec = new Record("user", db);
+		//        createRec.Set<string>("first_name", "First Name");
+		//        createRec.Set<string>("last_name", "Last Name");
+		//        createRec.Set<string>("username", "fname");
+		//        createRec.Set<string>("password", "pass");
+		//        createRec.Create();
 
-        //        watch.Stop();
-        //        Console.WriteLine("Create Time: " + watch.Elapsed);
-        //        //Console.ReadLine();
-        //        watch.Reset();
+		//        watch.Stop();
+		//        Console.WriteLine("Create Time: " + watch.Elapsed);
+		//        //Console.ReadLine();
+		//        watch.Reset();
 
-        //        watch.Start();
-        //        Record updateRec = new Record("user", db);
-        //        updateRec.AddQuery("first_name/=/First Name", ClauseType.And);
-        //        updateRec.AddQuery("last_name/=/Last Name");
-        //        updateRec.Read();
+		//        watch.Start();
+		//        Record updateRec = new Record("user", db);
+		//        updateRec.AddQuery("first_name/=/First Name", ClauseType.And);
+		//        updateRec.AddQuery("last_name/=/Last Name");
+		//        updateRec.Read();
 
-        //        if (updateRec.Next())
-        //        {
-        //            updateRec.Set<string>("first_name", "First Name 1");
-        //            updateRec.Update();
-        //        }
-        //        watch.Stop();
-        //        Console.WriteLine("Update Time: " + watch.Elapsed);
-        //        //Console.ReadLine();
-        //        watch.Reset();
+		//        if (updateRec.Next())
+		//        {
+		//            updateRec.Set<string>("first_name", "First Name 1");
+		//            updateRec.Update();
+		//        }
+		//        watch.Stop();
+		//        Console.WriteLine("Update Time: " + watch.Elapsed);
+		//        //Console.ReadLine();
+		//        watch.Reset();
 
-        //        watch.Start();
-        //        Record deleteRec = new Record("user", db);
+		//        watch.Start();
+		//        Record deleteRec = new Record("user", db);
 
-        //        deleteRec.AddQuery("first_name/=/First Name 1");
-        //        deleteRec.Read();
+		//        deleteRec.AddQuery("first_name/=/First Name 1");
+		//        deleteRec.Read();
 
-        //        if (deleteRec.Next())
-        //            deleteRec.Remove();
-        //        watch.Stop();
-        //        Console.WriteLine("Delete Time: " + watch.Elapsed);
-        //        //Console.ReadLine();
+		//        if (deleteRec.Next())
+		//            deleteRec.Remove();
+		//        watch.Stop();
+		//        Console.WriteLine("Delete Time: " + watch.Elapsed);
+		//        //Console.ReadLine();
 
-        //        entireTime.Stop();
-        //        elapsedTime += entireTime.Elapsed;
-        //    }
-        //    Console.WriteLine("\n50 iteration time: " + elapsedTime);
-        //    Console.ReadLine();
-        }
-    }
+		//        entireTime.Stop();
+		//        elapsedTime += entireTime.Elapsed;
+		//    }
+		//    Console.WriteLine("\n50 iteration time: " + elapsedTime);
+		//    Console.ReadLine();
+		}
+	}
 }

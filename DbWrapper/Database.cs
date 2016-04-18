@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Odbc;
-using System.Data.OleDb;
-using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace DbWrapper {
 	public enum DatabaseEngine : sbyte {
@@ -16,25 +15,13 @@ namespace DbWrapper {
 
 	[Serializable]
 	public sealed class Database : IDisposable {
-		/*
-		 * Private class variables
-		 */
-		private static OdbcConnection _conn;
-		private static Hashtable _schema;
+
 		private List<string> _tableList;
-		private string _catalog;
-		private string _server;
-		private string _username;
-		private string _password;
 		private string _provider;
-		private DatabaseEngine _engine;
 
 		[NonSerialized]
 		private OdbcConnectionStringBuilder _conBuilder;
 
-		/*
-		 * Class constructors
-		 */
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -49,20 +36,21 @@ namespace DbWrapper {
 		/// <param name="catalog"></param>
 		/// <param name="username"></param>
 		/// <param name="password"></param>
-		public Database(string server,
-						string catalog,
-						DatabaseEngine engine,
-						string username = "",
-						string password = "") {
-			Init();
+		public Database(
+			string server,
+			string catalog,
+			DatabaseEngine engine,
+			string username = "",
+			string password = ""
+		) : this() {
 
-			_server = server;
-			_catalog = catalog;
-			_username = username;
-			_password = password;
-			_engine = engine;
+			Server = server;
+			Catalog = catalog;
+			Username = username;
+			Password = password;
+			Engine = engine;
 
-			switch (_engine) {
+			switch (Engine) {
 				case DatabaseEngine.SqlServer:
 					_provider = "SQL Server";
 					break;
@@ -75,72 +63,52 @@ namespace DbWrapper {
 			}
 
 			_conBuilder.Driver = _provider;
-			_conBuilder["Server"] = _server;
-			_conBuilder["Uid"] = _username;
-			_conBuilder["Pwd"] = _password;
-			_conBuilder["Database"] = _catalog;
-			_conn.ConnectionString = _conBuilder.ToString();
+			_conBuilder["Server"] = Server;
+			_conBuilder["Uid"] = username;
+			_conBuilder["Pwd"] = password;
+			_conBuilder["Database"] = Catalog;
+			Connection.ConnectionString = _conBuilder.ToString();
 			GetTableList(catalog);
 
-			if (_schema == null) {
-				_schema = new Hashtable();
+			if (Schema == null) {
+				Schema = new Hashtable();
 				BuildSchema();
 			}
 		}
 
-		/*
-		 * Public class properties
-		 */
-		public static OdbcConnection Connection {
-			get { return _conn; }
-		}
-		public List<string> Tables {
-			get { return _tableList; }
-		}
-		public string Server {
-			get { return _server; }
-		}
-		public string Username {
-			get { return _username; }
-		}
-		public string Password {
-			get { return _password; }
-		}
-		public string Catalog {
-			get { return _catalog; }
-		}
-		public DatabaseEngine Engine {
-			get { return _engine; }
-		}
-		public static Hashtable Schema {
-			get { return _schema; }
-		}
+		public static OdbcConnection Connection { get; private set; }
+		public List<string> Tables { get; private set; }
+		public string Server { get; private set; }
+		public string Username { get; private set; }
+		public string Password { get; private set; }
+		public string Catalog { get; private set; }
+		public DatabaseEngine Engine { get; private set; }
+		public static Hashtable Schema { get; private set; }
 
 		public void Open() {
-			if (_conn.State == ConnectionState.Closed)
-				_conn.Open();
+			if (Connection.State == ConnectionState.Closed) {
+				Connection.Open();
+			}
 		}
 
 		public void Close() {
-			if (_conn.State == ConnectionState.Open)
-				_conn.Close();
+			if (Connection.State == ConnectionState.Open) {
+				Connection.Close();
+			}
 		}
 
 		/// <summary>
 		/// Disposes the object out of memory
 		/// </summary>
 		public void Dispose() {
-			_conn.Close();
-			_conn.Dispose();
+			Connection.Close();
+			Connection.Dispose();
 			_conBuilder.Clear();
 
-			_conn = null;
+			Connection = null;
 			_conBuilder = null;
 		}
 
-		/*
-		 * Internal class methods
-		 */
 		/// <summary>
 		/// Retrieves a list of columns and their data types in
 		/// order to create the SELECT statement.
@@ -148,19 +116,23 @@ namespace DbWrapper {
 		/// <param name="table"></param>
 		/// <returns></returns>
 		internal static Hashtable GetColumns(string table) {
-			_conn.Open();
+			Connection.Open();
+
 			Hashtable colList = new Hashtable();
-			DataTable dt = _conn.GetSchema("COLUMNS", new string[] { null, null, table, null });
+			DataTable dt = Connection.GetSchema(
+				"COLUMNS",
+				new string[] { null, null, table, null }
+			);
+
 			foreach (DataRow row in dt.Rows) {
 				if (row["TABLE_NAME"].ToString().Equals(table)) {
-					string val = row["TYPE_NAME"].ToString();
+					string typeStr = row["TYPE_NAME"].ToString();
 					OdbcType dataType = (OdbcType)Int32.Parse(row["DATA_TYPE"].ToString());
-					Type t = Database.GetSystemType(val);
-					colList.Add(row["COLUMN_NAME"].ToString(), t);
+					colList.Add(row["COLUMN_NAME"].ToString(), GetSystemType(typeStr));
 				}
 			}
-			_conn.Close();
 
+			Connection.Close();
 			return colList;
 		}
 
@@ -171,53 +143,64 @@ namespace DbWrapper {
 		/// <returns></returns>
 		internal static List<TableConstraintInfo> GetTableConstraints(string table) {
 			List<TableConstraintInfo> list = new List<TableConstraintInfo>();
-			_conn.Open();
-			DataTable fKeys = _conn.GetSchema(
+			Connection.Open();
+			DataTable foreignKeys = Connection.GetSchema(
 				"indexes",
 				new string[] { null, null, table, null }
 			);
-			DataTable pKeys = _conn.GetSchema(
+			DataTable primaryKeys = Connection.GetSchema(
 				"indexes",
 				new string[] { null, null, table, null }
 			);
-			_conn.Close();
+			Connection.Close();
 
-			// TODO(Logan): Have two threads going at the same time and join them together.
-			/*
-			 * Go through the data table and get the foreign key information
-			 */
-			for (int i = 0; i < fKeys.Rows.Count; i++) {
-				DataRow row = fKeys.Rows[i];
+			Thread[] threadArray = new Thread[2];
+			Thread foreignKeyThread = new Thread(() => {
+				/*
+				 * Go through the data table and get the foreign key information
+				 */
+				for (int i = 0; i < foreignKeys.Rows.Count; i++) {
+					DataRow row = foreignKeys.Rows[i];
 
-				if (row["TABLE_NAME"].ToString().Equals(table) &&
-					row["INDEX_NAME"].ToString().Contains("FK")) {
-					TableConstraintInfo info = new TableConstraintInfo();
-					info.Column = row["COLUMN_NAME"].ToString();
-					list.Add(info);
+					if (row["TABLE_NAME"].ToString().Equals(table) &&
+						row["INDEX_NAME"].ToString().Contains("FK")) {
+						TableConstraintInfo info = new TableConstraintInfo();
+						info.Column = row["COLUMN_NAME"].ToString();
+						list.Add(info);
+					}
 				}
+			});
+			threadArray[0] = foreignKeyThread;
+			foreignKeyThread.Start();
+
+			Thread primaryKeyThread = new Thread(() => {
+				/*
+				 * Go through the same table to get the primary key information
+				 */
+				for (int i = 0; i < primaryKeys.Rows.Count; i++) {
+					DataRow row = primaryKeys.Rows[i];
+
+					if (row["TABLE_NAME"].ToString().Equals(table) &&
+						row["INDEX_NAME"].ToString().Contains("PK")) {
+
+						TableConstraintInfo info = new TableConstraintInfo();
+						info.Column = row["COLUMN_NAME"].ToString();
+						info.IsPrimaryKey = true;
+
+						list.Add(info);
+					}
+				}
+			});
+			threadArray[1] = primaryKeyThread;
+			primaryKeyThread.Start();
+
+			for (sbyte i = 0; i < threadArray.Length; i++) {
+				threadArray[i].Join();
 			}
 
-			/*
-			 * Go through the same table to get the primary key information
-			 */
-			for (int i = 0; i < pKeys.Rows.Count; i++) {
-				DataRow row = pKeys.Rows[i];
-
-				if (row["TABLE_NAME"].ToString().Equals(table) &&
-					row["INDEX_NAME"].ToString().Contains("PK")) {
-
-					TableConstraintInfo info = new TableConstraintInfo();
-					info.Column = row["COLUMN_NAME"].ToString();
-					info.IsPrimaryKey = true;
-
-					list.Add(info);
-				}
-			}
 			return list;
 		}
-		/*
-		 * Private static class methods
-		 */
+
 		/// <summary>
 		/// Takes the SQL data type and converts it to the CLR type
 		/// </summary>
@@ -251,29 +234,26 @@ namespace DbWrapper {
 					throw new ArgumentException("Type not found");
 			}
 		}
-		/*
-		 * Private class methods
-		 */
+
 		/// <summary>
 		/// Used to initialize the object in all constructor methods
 		/// </summary>
 		private void Init() {
 			_conBuilder = new OdbcConnectionStringBuilder();
 			_tableList = new List<string>();
-			_catalog = String.Empty;
-			_server = String.Empty;
+			Catalog = String.Empty;
+			Server = String.Empty;
 
-			if (_conn == null)
-				_conn = new OdbcConnection();
+			if (Connection == null)
+				Connection = new OdbcConnection();
 		}
 
 		private void GetTableList(string db) {
 			if (_tableList.Count > 0)
 				_tableList.Clear();
 
-			_conn.Open();
-			//DataTable dt = _conn.GetSchema("Tables", new string[] {null, "dbo", null});
-			DataTable dt = _conn.GetSchema("Tables");
+			Connection.Open();
+			DataTable dt = Connection.GetSchema("Tables");
 
 			foreach (DataRow row in dt.Rows) {
 				string rowSchema = row["TABLE_SCHEM"].ToString();
@@ -283,7 +263,7 @@ namespace DbWrapper {
 					_tableList.Add(row["TABLE_NAME"].ToString());
 				}
 			}
-			_conn.Close();
+			Connection.Close();
 		}
 
 		/// <summary>
@@ -292,20 +272,10 @@ namespace DbWrapper {
 		private void BuildSchema() {
 			for (short i = 0; i < _tableList.Count; i++) {
 				Hashtable tblSchema = GetColumns(_tableList[i]);
-				_schema.Add(_tableList[i], tblSchema);
+				Schema.Add(_tableList[i], tblSchema);
 			}
 		}
 
-		private static string GetConstraintTable(string constraint) {
-			string matchText = String.Empty;
-			string pattern = @"(\w{2}_FK_)(\w+)";
-			Match match = Regex.Match(constraint, pattern, RegexOptions.IgnoreCase);
-
-			if (match.Success) {
-				matchText = match.Groups[2].Value;
-			}
-
-			return matchText;
-		}
 	}
+
 }
