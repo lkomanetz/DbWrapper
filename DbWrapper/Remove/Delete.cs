@@ -6,14 +6,7 @@ using System.Text;
 
 namespace DbWrapper.Remove {
 	public class Delete : Command {
-		/*
-		 * Private class variables
-		 */
-		private Record _record;
 
-		/*
-		 * Public class constructors
-		 */
 		/// <summary>
 		/// Constructor
 		/// </summary>

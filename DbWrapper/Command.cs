@@ -13,9 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace DbWrapper {
 	public abstract class Command : IDisposable {
-		/*
-		 * Private class variables
-		 */
+
 		protected List<WhereClause> _clauses;    // Stores list of WHERE clauses
 		protected Dictionary<string, Join> _joins;      // Stores list of JOIN clauses
 		protected OdbcCommand _command;    // Single SQL command built with SQL Parameters
@@ -23,10 +21,8 @@ namespace DbWrapper {
 		protected StringBuilder _commandStr; // Generated SQL command
 		protected Database _db;         // Database object for opening/closing connections
 		protected Hashtable _columnList; // List of columns for designated table and data types
+		protected Record _record;
 
-		/*
-		 * Class constructors
-		 */
 		/// <summary>
 		/// Builds a query based on the table and clause
 		/// passed into the constructor.
@@ -51,19 +47,9 @@ namespace DbWrapper {
 		/// into the constructor
 		/// </summary>
 		/// <param name="db"></param>
-		public Command(Database db) {
-			if (_clauses == null) {
-				_clauses = new List<WhereClause>();
-			}
-
-			if (_joins == null) {
-				_joins = new Dictionary<string, Join>();
-			}
-
-			_table = String.Empty;
-			_command = new OdbcCommand();
+		public Command(Database db) 
+			: this() {
 			_db = db;
-			_columnList = new Hashtable();
 		}
 
 		/*
@@ -116,9 +102,6 @@ namespace DbWrapper {
 			}
 		}
 
-		/*
-		 * Public virtual methods
-		 */
 		/// <summary>
 		/// Creates the SQL Command based on the list of clauses
 		/// </summary>
@@ -134,9 +117,6 @@ namespace DbWrapper {
 			_columnList = Database.GetColumns(_table);
 		}
 
-		/*
-		 * Public override methods
-		 */
 		/// <summary>
 		/// Generates the SQL statement
 		/// </summary>
@@ -145,9 +125,6 @@ namespace DbWrapper {
 			return _command.CommandText;
 		}
 
-		/*
-		 * Protected class methods
-		 */
 		/// <summary>
 		/// Creates a SQL parameter out of the passed in WHERE clause
 		/// </summary>
@@ -448,16 +425,28 @@ namespace DbWrapper {
 			_commandStr.Append("\n)\n");
 		}
 
-		/*
-		 * Private class methods 
-		 */
+		protected void SetClauseDataType(ref WhereClause clause, object key) {
+			if (_record.Properties[key] == null) {
+				clause.DataType = null;
+			}
+
+			clause.DataType = _record.Properties[key].GetType();
+
+			/*
+			 * I have to check if it is of a byte array type because
+			 * if it is I have to make sure the Value property is
+			 * properly set.  Otherwise it sets it to the String
+			 * "System.Byte[]" instead of the right value.
+			 */
+			if (_record.Properties[key].GetType() == typeof(byte[])) {
+				clause.Value = (byte[])_record.Properties[key];
+			}
+		}
+
 		private string RemoveIllegalCharacters(string paramName) {
 			return Regex.Replace(paramName, @"\.", "");
 		}
 
-		/*
-		 * Public class methods
-		 */
 		/// <summary>
 		/// Adds a WHERE clause to the list of clauses
 		/// </summary>
@@ -503,7 +492,7 @@ namespace DbWrapper {
 			}
 			catch (Exception e) {
 				trans.Rollback();
-				throw;
+				throw e;
 			}
 			finally {
 				trans.Dispose();
