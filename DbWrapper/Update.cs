@@ -78,7 +78,7 @@ namespace DbWrapper
 
                 clauseStr = String.Format("{0}/=/{1}",
                                             property,
-                                            _record.PropertyList[property]);
+                                            _record.Properties[property]);
 
                 clause = new WhereClause(clauseStr, _table, type);
                 SetClauseDataType(ref clause, property);
@@ -87,16 +87,16 @@ namespace DbWrapper
             else
             {
                 int propertyCount = 0;
-                foreach (var key in _record.PropertyList.Keys)
+                foreach (var key in _record.Properties.Keys)
                 {
-                    if (propertyCount < _record.PropertyList.Count - 1)
+                    if (propertyCount < _record.Properties.Count - 1)
                         type = ClauseType.And;
                     else
                         type = ClauseType.Neither;
 
                     clauseStr = String.Format("{0}/=/{1}",
                                                     key,
-                                                    _record.PropertyList[key]);
+                                                    _record.Properties[key]);
 
                     clause = new WhereClause(clauseStr, _table, type);
                     SetClauseDataType(ref clause, key);
@@ -117,7 +117,7 @@ namespace DbWrapper
         private void CreateSet()
         {
             short i = 0;
-            foreach (var key in _record.PropertyList.Keys)
+            foreach (var key in _record.Properties.Keys)
             {
                 int fkIndex = _record.IdentityColumns.FindIndex(x => 
                     {
@@ -140,11 +140,11 @@ namespace DbWrapper
                 {
                     WhereClause clause = new WhereClause(String.Format("{0}/=/{1}",
                                                                     key,
-                                                                    _record.PropertyList[key]));
+                                                                    _record.Properties[key]));
                     SetClauseDataType(ref clause, key);
 
                     OdbcParameter param = BuildParam(ref clause, "U" + Convert.ToString(i));
-                    if (i != _record.PropertyList.Count - 1)
+                    if (i != _record.Properties.Count - 1)
                     {
                         _commandStr.Append(String.Format("{2}{0}{3} = {1}\n\t, ",
                                                        clause.Column,
@@ -168,17 +168,17 @@ namespace DbWrapper
 
         private void SetClauseDataType(ref WhereClause clause, object key)
         {
-            if (_record.PropertyList[key] != null)
+            if (_record.Properties[key] != null)
             {
-                clause.DataType = _record.PropertyList[key].GetType();
+                clause.DataType = _record.Properties[key].GetType();
                 /*
                  * I have to check if it is of a byte array type because
                  * if it is I have to make sure the Value property is
                  * properly set.  Otherwise it sets it to the String
                  * "System.Byte[]" instead of the right value.
                  */
-                if (_record.PropertyList[key].GetType() == typeof(byte[]))
-                    clause.Value = (byte[])_record.PropertyList[key];
+                if (_record.Properties[key].GetType() == typeof(byte[]))
+                    clause.Value = (byte[])_record.Properties[key];
             }
             else
                 clause.DataType = null;

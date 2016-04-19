@@ -66,7 +66,7 @@ namespace DbWrapper
              * Loops through the property set of the first record
              * in order to get the names of the columns to be inserting to
              */
-            Hashtable props = _records[0].PropertyList;
+            Hashtable props = _records[0].Properties;
 
             short counter = 0;
             foreach (var key in props.Keys)
@@ -111,7 +111,7 @@ namespace DbWrapper
             for (short i = 0; i < _records.Length; i++)
             {
                 List<OdbcParameter> paramList = new List<OdbcParameter>();
-                props = _records[i].PropertyList;
+                props = _records[i].Properties;
 
                 /*
                  * Now that I have the list of properties for _records[i], I
@@ -192,8 +192,8 @@ namespace DbWrapper
 
                 if ((Type)_record.PropertyListInfo[key] == typeof(byte[]))
                 {
-                    if (_record.PropertyList[key] != DBNull.Value)
-                        clause.Value = (byte[])_record.PropertyList[key];
+                    if (_record.Properties[key] != DBNull.Value)
+                        clause.Value = (byte[])_record.Properties[key];
                 }
             }
             else

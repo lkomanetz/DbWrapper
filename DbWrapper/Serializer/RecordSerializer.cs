@@ -86,11 +86,11 @@ namespace DbWrapper.Serializer
         {
             XmlElement properties = _xmlDoc.CreateElement("properties");
 
-            foreach (string key in _record.PropertyList.Keys)
+            foreach (string key in _record.Properties.Keys)
             {
                 XmlElement property = _xmlDoc.CreateElement("property");
                 property.SetAttribute("Name", key);
-                property.SetAttribute("Value", _record.PropertyList[key].ToString());
+                property.SetAttribute("Value", _record.Properties[key].ToString());
                 property.SetAttribute("Type", _record.Query.ColumnList[key].ToString());
 
                 properties.AppendChild(property);

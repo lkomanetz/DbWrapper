@@ -34,8 +34,8 @@ namespace DbWrapper.Remove {
 
 			if (String.IsNullOrEmpty(property)) {
 				short i = 0;
-				foreach (var key in _record.PropertyList.Keys) {
-					if (i < _record.PropertyList.Count - 1)
+				foreach (var key in _record.Properties.Keys) {
+					if (i < _record.Properties.Count - 1)
 						type = ClauseType.And;
 					else
 						type = ClauseType.Neither;
@@ -43,13 +43,13 @@ namespace DbWrapper.Remove {
 					clauseStr = String.Format(
 						"{0}/=/{1}",
 						key,
-						_record.PropertyList[key]
+						_record.Properties[key]
 					);
 
 					clause = new WhereClause(clauseStr, _table, type);
 
-					if (_record.PropertyList[key] != null) {
-						clause.DataType = _record.PropertyList[key].GetType();
+					if (_record.Properties[key] != null) {
+						clause.DataType = _record.Properties[key].GetType();
 
 						/*
 						 * I have to check if it is of a byte array type because
@@ -57,8 +57,8 @@ namespace DbWrapper.Remove {
 						 * properly set.  Otherwise it sets it to the String
 						 * "System.Byte[]" instead of the right value.
 						 */
-						if (_record.PropertyList[key].GetType() == typeof(byte[]))
-							clause.Value = (byte[])_record.PropertyList[key];
+						if (_record.Properties[key].GetType() == typeof(byte[]))
+							clause.Value = (byte[])_record.Properties[key];
 					}
 					else
 						clause.DataType = null;
@@ -72,16 +72,16 @@ namespace DbWrapper.Remove {
 				clauseStr = String.Format(
 					"{0}/=/{1}",
 					 property,
-					 _record.PropertyList[property]
+					 _record.Properties[property]
 				 );
 
 				clause = new WhereClause(clauseStr, _table, type);
 
-				if (_record.PropertyList[property] != null) {
-					clause.DataType = _record.PropertyList[property].GetType();
+				if (_record.Properties[property] != null) {
+					clause.DataType = _record.Properties[property].GetType();
 
-					if (_record.PropertyList[property].GetType() == typeof(byte[]))
-						clause.Value = (byte[])_record.PropertyList[property];
+					if (_record.Properties[property].GetType() == typeof(byte[]))
+						clause.Value = (byte[])_record.Properties[property];
 				}
 				else
 					clause.DataType = null;
