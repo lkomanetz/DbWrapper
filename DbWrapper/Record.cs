@@ -1,6 +1,7 @@
 ﻿using DbWrapper.Read;
 using DbWrapper.Remove;
 using DbWrapper.Serializer;
+using DbWrapper.Contracts;
 using System;
 using System.Collections;
 using System.Data;

@@ -1,5 +1,5 @@
 ﻿
-namespace DbWrapper.Read {
+namespace DbWrapper.Contracts {
 	public enum JoinType : byte {
 		Inner,
 		Outer,

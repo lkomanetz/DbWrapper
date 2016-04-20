@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
-namespace DbWrapper {
+namespace DbWrapper.Contracts {
 
 	public class TableConstraintInfo {
 

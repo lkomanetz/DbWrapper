@@ -7,7 +7,7 @@ using System.Data.Odbc;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace DbWrapper {
+namespace DbWrapper.Contracts {
 	public enum DatabaseEngine : sbyte {
 		SqlServer,
 		MySQL
@@ -115,7 +115,7 @@ namespace DbWrapper {
 		/// </summary>
 		/// <param name="table"></param>
 		/// <returns></returns>
-		internal static Hashtable GetColumns(string table) {
+		public static Hashtable GetColumnsFor(string table) {
 			Connection.Open();
 
 			Hashtable colList = new Hashtable();
@@ -141,7 +141,7 @@ namespace DbWrapper {
 		/// </summary>
 		/// <param name="table"></param>
 		/// <returns></returns>
-		internal static List<TableConstraintInfo> GetTableConstraints(string table) {
+		public static List<TableConstraintInfo> GetTableConstraints(string table) {
 			List<TableConstraintInfo> list = new List<TableConstraintInfo>();
 			Connection.Open();
 			DataTable foreignKeys = Connection.GetSchema(
@@ -271,7 +271,7 @@ namespace DbWrapper {
 		/// </summary>
 		private void BuildSchema() {
 			for (short i = 0; i < _tableList.Count; i++) {
-				Hashtable tblSchema = GetColumns(_tableList[i]);
+				Hashtable tblSchema = GetColumnsFor(_tableList[i]);
 				Schema.Add(_tableList[i], tblSchema);
 			}
 		}

@@ -1,4 +1,5 @@
 ﻿using DbWrapper.Read;
+using DbWrapper.Contracts;
 using System;
 using System.Collections;
 using System.Collections.Generic;

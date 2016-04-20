@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DbWrapper;
+using DbWrapper.Contracts;
 using System.Data;
 using DbWrapper.Read;
 using System.Xml;

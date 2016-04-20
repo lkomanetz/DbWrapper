@@ -52,6 +52,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DbWrapper.Contracts\DbWrapper.Contracts.csproj">
+      <Project>{7fbaf722-0e8c-4ddd-8e68-085dcbb71ad4}</Project>
+      <Name>DbWrapper.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DbWrapper\DbWrapper.csproj">
       <Project>{3047d4f0-7ce0-475a-84ba-43a0c70a5cbb}</Project>
       <Name>DbWrapper</Name>

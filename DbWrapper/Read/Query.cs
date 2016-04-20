@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Data.SqlClient;
 using System.Text;
+using DbWrapper.Contracts;
 
 namespace DbWrapper.Read {
 	[Serializable]

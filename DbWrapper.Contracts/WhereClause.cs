@@ -2,7 +2,7 @@
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace DbWrapper.Read {
+namespace DbWrapper.Contracts {
 	public enum ClauseType : byte {
 		Neither,
 		And,

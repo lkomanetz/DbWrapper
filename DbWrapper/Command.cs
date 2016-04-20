@@ -1,4 +1,5 @@
 ﻿using DbWrapper.Read;
+using DbWrapper.Contracts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -114,7 +115,7 @@ namespace DbWrapper {
 				_commandStr = new StringBuilder();
 			}
 
-			_columnList = Database.GetColumns(_table);
+			_columnList = Database.GetColumnsFor(_table);
 		}
 
 		/// <summary>
