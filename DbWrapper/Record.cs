@@ -15,6 +15,7 @@ namespace DbWrapper {
 		Success,
 		Failed
 	}
+
 	[Serializable]
 	public class Record : FlexObject {
 

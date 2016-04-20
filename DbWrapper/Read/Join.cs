@@ -9,17 +9,12 @@ namespace DbWrapper.Read {
 	}
 
 	public struct Join {
-		/*
-		 * Private structure variables
-		 */
+
 		private string _firstColumn;    // The column from the first table being joined on
 		private string _secondTable;    // The table that you are joining with
 		private string _secondColumn;   // The second table's column to join on
 		private JoinType _type;           // The type of join (inner, left, outer, etc.)
 
-		/*
-		 * Public structure properties
-		 */
 		/// <summary>
 		/// Gets or sets the name of the table to join the
 		/// first table with.

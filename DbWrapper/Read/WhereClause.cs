@@ -10,9 +10,7 @@ namespace DbWrapper.Read {
 	}
 
 	public class WhereClause {
-		/*
-		 * Private class variables
-		 */
+
 		private string _clause;
 		private ClauseType _type;
 		private Type _dataType;
@@ -21,9 +19,6 @@ namespace DbWrapper.Read {
 		private string _clauseOperator;
 		private object _value;
 
-		/*
-		 * Public class operators
-		 */
 		public WhereClause(
 			string clause,
 			string table = "",
@@ -60,9 +55,6 @@ namespace DbWrapper.Read {
 			BreakClauseApart();
 		}
 
-		/*
-		 * Public class properties
-		 */
 		/// <summary>
 		/// Gets or sets the clause
 		/// </summary>
@@ -113,9 +105,6 @@ namespace DbWrapper.Read {
 			set { this._value = value; }
 		}
 
-		/*
-		 * Private class methods
-		 */
 		/// <summary>
 		/// Breaks apart the WHERE clause into three different parts.
 		/// Index 0 = The name of the column

@@ -6,6 +6,7 @@ using System.Data.Odbc;
 using System.Text;
 
 namespace DbWrapper {
+
 	public class Update : Command {
 
 		public Update(Record rec, string table, Database db) : base(db) {

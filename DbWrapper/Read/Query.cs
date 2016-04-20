@@ -6,18 +6,13 @@ using System.Text;
 namespace DbWrapper.Read {
 	[Serializable]
 	public class Query : Command {
-		/*
-		 * Private class variables
-		 */
+
 		private static int _pageSize;      // Determines how many records are to be in a page of data
 		private uint _recordCount;   // Stores the total amount of records in a record set
 		private int _currentPage;   // Shows what page the object is currently on
 		private int _rowStart;      // Tells SQL what row the page should start on
 		private int _rowEnd;        // Tells SQL what row the page should end on
 
-		/*
-		 * Class constructors
-		 */
 		/// <summary>
 		/// Class constructor.  Sets the size of each data page to a default
 		/// of 25 records per page.
@@ -45,9 +40,6 @@ namespace DbWrapper.Read {
 			_pageSize = pageSize;
 		}
 
-		/*
-		 * Public class properties
-		 */
 		/// <summary>
 		/// Total count of records in parent table being queries
 		/// </summary>
@@ -97,9 +89,6 @@ namespace DbWrapper.Read {
 			set { base._columnList = value; }
 		}
 
-		/*
-		 * Public override methods
-		 */
 		public override string ToString() {
 			return base.ToString();
 		}
