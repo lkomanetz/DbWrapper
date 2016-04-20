@@ -48,17 +48,15 @@
     <Compile Include="Remove\Delete.cs" />
     <Compile Include="FlexObject.cs" />
     <Compile Include="Insert.cs" />
-    <Compile Include="Read\Join.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Read\Query.cs" />
     <Compile Include="Record.cs" />
     <Compile Include="Serializer\RecordSerializer.cs" />
+    <Compile Include="SqlServer\DynamicSqlCommand.cs" />
     <Compile Include="Update.cs" />
-    <Compile Include="Read\WhereClause.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MySQL\" />
-    <Folder Include="SqlServer\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DbWrapper.Contracts\DbWrapper.Contracts.csproj">
