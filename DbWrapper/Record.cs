@@ -155,7 +155,7 @@ namespace DbWrapper {
 
 				return DbMessage.Success;
 			}
-			catch (Exception e) {
+			catch {
 				return DbMessage.Failed;
 			}
 		}
@@ -327,7 +327,7 @@ namespace DbWrapper {
 
 				return DbMessage.Success;
 			}
-			catch (SqlException e) {
+			catch {
 				return DbMessage.Failed;
 			}
 		}
@@ -352,7 +352,7 @@ namespace DbWrapper {
 				insert.Execute();
 				return DbMessage.Success;
 			}
-			catch (Exception e) {
+			catch {
 				return DbMessage.Failed;
 			}
 
