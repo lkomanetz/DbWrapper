@@ -1,4 +1,5 @@
-﻿
+﻿using System.ComponentModel;
+
 namespace DbWrapper.Contracts {
 	public enum JoinType : byte {
 		Inner,

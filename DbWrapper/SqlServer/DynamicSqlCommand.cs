@@ -107,8 +107,8 @@ namespace DbWrapper.SqlServer {
 				firstCol
 			);
 			_commandStr.AppendFormat("FROM [{0}]", this.Table);
-			CreateCTEJoin();
-			CreateJoinSection(true); // The 'true' parameter says it is for CTE generation
+			CreateCTEJoinSection();
+			CreateWhereSection();
 			CreateWhereSection(0, 0); // The '0, 0' int parameters says it is for CTE generation
 			_commandStr.Append("\n)\n");
 		}
@@ -117,7 +117,57 @@ namespace DbWrapper.SqlServer {
 
 		}
 
-		private string CreateCTEJoin() {
+		private void CreateCTEJoinSection() {
+			string joinStr = "\n\t{3} JOIN {1}{0}{2}";
+
+			foreach (var key in this.Joins.Keys) {
+				Join join = this.Joins[key];
+				string typeStr = String.Empty;
+
+				switch (join.Type) {
+					case JoinType.Inner:
+						typeStr = "INNER";
+						break;
+					case JoinType.Outer:
+						typeStr = "OUTER";
+						break;
+					case JoinType.Left:
+						typeStr = "LEFT";
+						break;
+					case JoinType.Right:
+						typeStr = "RIGHT";
+						break;
+					case JoinType.Full:
+						typeStr = "FULL";
+						break;
+				}
+
+				_commandStr.Append(
+					String.Format(
+						joinStr,
+						join.Table,
+						EscapeCharacters[0],
+						EscapeCharacters[1],
+						typeStr
+					));
+
+					_commandStr.Append(
+						String.Format(
+							"\n\t\tON {4}{0}{5}.{4}{1}{5} = {4}{2}{5}.{4}{3}{5}",
+							this.Table,
+							join.Column,
+							join.Table,
+							join.JoinColumn,
+							EscapeCharacters[0],
+							EscapeCharacters[1]
+						)
+					);
+			}
+
+		}
+
+		private void CreateWhereSection() {
+
 		}
 
 		private string RemoveIllegalCharacters(string parameterName) {
