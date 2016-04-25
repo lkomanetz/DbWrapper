@@ -1,5 +1,4 @@
 .vs/
-*.sln
 *.vssscc
 DbWrapper/bin
 DbWrapper/obj/
