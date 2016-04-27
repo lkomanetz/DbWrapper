@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbWrapper.Contracts", "DbWrapper.Contracts\DbWrapper.Contracts.csproj", "{7FBAF722-0E8C-4DDD-8E68-085DCBB71AD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbWrapper.Extensions", "DbWrapper.Extensions\DbWrapper.Extensions.csproj", "{166A247C-7447-4B80-8A49-7C3D39E1CFBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7FBAF722-0E8C-4DDD-8E68-085DCBB71AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FBAF722-0E8C-4DDD-8E68-085DCBB71AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FBAF722-0E8C-4DDD-8E68-085DCBB71AD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{166A247C-7447-4B80-8A49-7C3D39E1CFBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{166A247C-7447-4B80-8A49-7C3D39E1CFBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{166A247C-7447-4B80-8A49-7C3D39E1CFBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{166A247C-7447-4B80-8A49-7C3D39E1CFBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

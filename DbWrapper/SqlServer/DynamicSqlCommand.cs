@@ -50,6 +50,9 @@ namespace DbWrapper.SqlServer {
 			return _command.CommandText;
 		}
 
+		protected abstract void CreateWhereSection(); 
+		protected abstract void CreateJoinSection(); 
+
 		public virtual void CreateCommand() {
 			if (_command == null) {
 				_command = new OdbcCommand();
@@ -109,13 +112,13 @@ namespace DbWrapper.SqlServer {
 			_commandStr.AppendFormat("FROM [{0}]", this.Table);
 			CreateCTEJoinSection();
 			CreateWhereSection();
-			CreateWhereSection(0, 0); // The '0, 0' int parameters says it is for CTE generation
+
+			//TODO (Logan): Remove this code once CreateWhereSection is figured out
+			// CreateWhereSection(0, 0); // The '0, 0' int parameters says it is for CTE generation
+
 			_commandStr.Append("\n)\n");
 		}
 
-		internal void CreateJoinSection() {
-
-		}
 
 		private void CreateCTEJoinSection() {
 			string joinStr = "\n\t{3} JOIN {1}{0}{2}";
@@ -164,14 +167,6 @@ namespace DbWrapper.SqlServer {
 					);
 			}
 
-		}
-
-		private void CreateWhereSection() {
-
-		}
-
-		private string RemoveIllegalCharacters(string parameterName) {
-			return Regex.Replace(parameterName, @"\.", "");
 		}
 
 	}
