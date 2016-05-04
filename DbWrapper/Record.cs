@@ -20,7 +20,7 @@ namespace DbWrapper {
 	[Serializable]
 	public class Record : FlexObject {
 
-		private Database _database;      // Database connection object
+		private DynamicDatabase _database;      // Database connection object
 		private Record[] _recordList;    // List of records for when a query returns more than one
 		private Query _query;         // SQL query used for SELECT statements
 		private String _table;         // SQL table that the commands are pointed to
@@ -32,7 +32,7 @@ namespace DbWrapper {
 		/// Class constructor.
 		/// </summary>
 		public Record() : base() {
-			_database = new Database();
+			_database = new DynamicDatabase();
 			_table = String.Empty;
 			_page = 1;
 			_recordIndex = -1;
@@ -41,7 +41,7 @@ namespace DbWrapper {
 		/// Class constructor.
 		/// </summary>
 		/// <param name="_db"></param>
-		public Record(string table, Database db) : base() {
+		public Record(string table, DynamicDatabase db) : base() {
 			_database = db;
 			_table = table;
 			_query = new Query(db);
@@ -72,7 +72,7 @@ namespace DbWrapper {
 			get { return _table; }
 		}
 
-		public Database Database {
+		public DynamicDatabase Database {
 			get { return _database; }
 		}
 
@@ -102,9 +102,9 @@ namespace DbWrapper {
 		/// table and initializes the Record object with null values.
 		/// </summary>
 		private void Initialize() {
-			_query.ColumnList = (Hashtable)Database.Schema[_table];
+			_query.ColumnList = (Hashtable)DynamicDatabase.Schema[_table];
 			base.PropertyListInfo = _query.ColumnList;
-			base.IdentityColumns = Database.GetTableConstraints(_table);
+			base.IdentityColumns = DynamicDatabase.GetTableConstraints(_table);
 
 			InitializeProperties();
 		}

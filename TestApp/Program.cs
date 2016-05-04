@@ -35,7 +35,7 @@ namespace TestApp
 			//if (rec.Next()) {
 			//	Console.WriteLine(rec.Get<string>("Title"));
 			//}
-			Database db = new Database("140.186.94.50",
+			DynamicDatabase db = new DynamicDatabase("140.186.94.50",
 										"FusionDB",
 										DatabaseEngine.SqlServer,
 										"Fusion_SA",

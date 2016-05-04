@@ -12,7 +12,7 @@ namespace DbWrapper.Remove {
 		/// Constructor
 		/// </summary>
 		/// <param name="db"></param>
-		public Delete(Record record, string table, Database db)
+		public Delete(Record record, string table, DynamicDatabase db)
 			: base(db) {
 			this._table = table;
 			this._record = record;

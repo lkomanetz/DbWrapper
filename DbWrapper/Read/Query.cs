@@ -19,7 +19,7 @@ namespace DbWrapper.Read {
 		/// of 25 records per page.
 		/// </summary>
 		/// <param name="db"></param>
-		public Query(Database db)
+		public Query(DynamicDatabase db)
 			: base(db) {
 
 			_recordCount = 0;
@@ -34,7 +34,7 @@ namespace DbWrapper.Read {
 		/// </summary>
 		/// <param name="db"></param>
 		/// <param name="pageSize"></param>
-		public Query(Database db, int pageSize)
+		public Query(DynamicDatabase db, int pageSize)
 			: base(db) {
 
 			_recordCount = 0;

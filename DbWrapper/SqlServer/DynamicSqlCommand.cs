@@ -7,14 +7,16 @@ using System.Text;
 using DbWrapper.Contracts;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
+using DbWrapper.Extensions;
 
 namespace DbWrapper.SqlServer {
 
 	public abstract class DynamicSqlCommand : IDynamicCommand {
 
-		private OdbcCommand _command;
-		private StringBuilder _commandStr;
-		private Hashtable _columnList;
+		protected OdbcCommand _command;
+		protected Hashtable _columnList;
+		protected StringBuilder _commandStr;
 
 		public DynamicSqlCommand() {
 			this.EscapeCharacters = new char[] { '[', ']' };
@@ -23,13 +25,13 @@ namespace DbWrapper.SqlServer {
 			this.Table = String.Empty;
 		}
 
-		public DynamicSqlCommand(Database db)
+		public DynamicSqlCommand(DynamicDatabase db)
 			: this() {
 			this.Database = db;
 		}
 
 		public List<WhereClause> Clauses { get; set; }
-		public Database Database { get; set; }
+		public DynamicDatabase Database { get; set; }
 		public char[] EscapeCharacters { get; }
 		public Dictionary<string, Join> Joins { get; set; }
 		public string Table { get; set; }
@@ -62,7 +64,7 @@ namespace DbWrapper.SqlServer {
 				_commandStr = new StringBuilder();
 			}
 
-			_columnList = Database.GetColumnsFor(this.Table);
+			_columnList = DynamicDatabase.GetColumnsFor(this.Table);
 		}
 
 		public void Dispose() {
@@ -72,6 +74,29 @@ namespace DbWrapper.SqlServer {
 		}
 
 		public DataSet Execute() {
+			DataSet ds = new DataSet();
+			OdbcTransaction transaction = null;
+
+			try {
+				using (OdbcDataAdapter da = new OdbcDataAdapter(_command)) {
+					this.Database.Open();
+					_command.Connection = DynamicDatabase.Connection;
+					transaction = DynamicDatabase.Connection.BeginTransaction();
+					_command.Transaction = transaction;
+					da.Fill(ds);
+					transaction.Commit();
+					_commandStr.Length = 0;
+				}
+			}
+			catch (Exception e) {
+				transaction.Rollback();
+				throw e;
+			}
+			finally {
+				transaction.Dispose();
+				transaction = null;
+				this.Database.Close();
+			}
 			throw new NotImplementedException();
 		}
 
@@ -111,62 +136,109 @@ namespace DbWrapper.SqlServer {
 			);
 			_commandStr.AppendFormat("FROM [{0}]", this.Table);
 			CreateCTEJoinSection();
-			CreateWhereSection();
-
-			//TODO (Logan): Remove this code once CreateWhereSection is figured out
-			// CreateWhereSection(0, 0); // The '0, 0' int parameters says it is for CTE generation
+			CreateCTEWhereSection();
 
 			_commandStr.Append("\n)\n");
 		}
 
+		internal OdbcParameter BuildParameter(ref WhereClause clause, string suffix) {
+			OdbcParameter parameter = new OdbcParameter();
+			parameter.ParameterName = "?";
+			parameter.Value = clause.Value;
+
+			if (clause.DataType != null) {
+				TypeConverter tc = TypeDescriptor.GetConverter(parameter.DbType);
+
+				if (tc.CanConvertFrom(clause.DataType)) {
+					parameter.DbType = (DbType)tc.ConvertFrom(clause.DataType.Name);
+				}
+				else {
+					try {
+						parameter.DbType = (DbType)tc.ConvertFrom(clause.DataType.Name);
+					}
+					catch {
+						if (clause.DataType == typeof(byte[])) {
+							parameter.DbType = DbType.Binary;
+							parameter.Size = -1;
+						}
+					}
+				}
+			}
+
+			return parameter;
+		}
 
 		private void CreateCTEJoinSection() {
 			string joinStr = "\n\t{3} JOIN {1}{0}{2}";
 
-			foreach (var key in this.Joins.Keys) {
-				Join join = this.Joins[key];
-				string typeStr = String.Empty;
-
-				switch (join.Type) {
-					case JoinType.Inner:
-						typeStr = "INNER";
-						break;
-					case JoinType.Outer:
-						typeStr = "OUTER";
-						break;
-					case JoinType.Left:
-						typeStr = "LEFT";
-						break;
-					case JoinType.Right:
-						typeStr = "RIGHT";
-						break;
-					case JoinType.Full:
-						typeStr = "FULL";
-						break;
-				}
+			foreach (var kvp in this.Joins) {
+				Join join = kvp.Value;
 
 				_commandStr.Append(
 					String.Format(
 						joinStr,
-						join.Table,
+						kvp.Value.Table,
 						EscapeCharacters[0],
 						EscapeCharacters[1],
-						typeStr
+						join.Type.ToString("G").ToUpper()
 					));
 
-					_commandStr.Append(
-						String.Format(
-							"\n\t\tON {4}{0}{5}.{4}{1}{5} = {4}{2}{5}.{4}{3}{5}",
-							this.Table,
-							join.Column,
-							join.Table,
-							join.JoinColumn,
-							EscapeCharacters[0],
-							EscapeCharacters[1]
-						)
-					);
+				_commandStr.Append(
+					String.Format(
+						"\n\t\tON {4}{0}{5}.{4}{1}{5} = {4}{2}{5}.{4}{3}{5}",
+						this.Table,
+						join.Column,
+						join.Table,
+						join.JoinColumn,
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					)
+				);
 			}
 
+		}
+
+		/*
+		 * I'm separating out the Where section for Sql Server because it doesn't use
+		 * Row Start and Row End at all.  So even though it is pretty similar to the
+		 * other Where section, I wanted to create a separate method that would only be
+		 * in the Sql Server query generation.
+		 */
+		private void CreateCTEWhereSection() {
+			if (this.Clauses == null || this.Clauses.Count == 0) {
+				return;
+			}
+
+			_commandStr.Append("\nWHERE (");
+			for (short i = 0; i < this.Clauses.Count; i++) {
+				WhereClause clause = this.Clauses[i];
+				OdbcParameter param = BuildParameter(ref clause, "W" + Convert.ToString(i));
+				param.RemoveIllegalCharacters();
+				_command.Parameters.Add(param);
+
+				if (clause.Type == ClauseType.Neither) {
+					_commandStr.AppendFormat(
+						"{3}{0}{4}.{3}{1}{4} {2} ?",
+						clause.Table,
+						clause.Column,
+						clause.Operator,
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					);
+				}
+				else {
+					_commandStr.AppendFormat(
+						"{4}{0}{5}.{4}{1}{5} {2} ? {3}\n\t",
+						clause.Table,
+						clause.Column,
+						clause.Operator,
+						clause.Type.ToString("G").ToUpper(),
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					);
+				}
+				_commandStr.Append(")");
+			}
 		}
 
 	}

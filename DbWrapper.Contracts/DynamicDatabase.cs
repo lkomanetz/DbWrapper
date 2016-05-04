@@ -14,7 +14,7 @@ namespace DbWrapper.Contracts {
 	}
 
 	[Serializable]
-	public sealed class Database : IDisposable {
+	public sealed class DynamicDatabase : IDisposable {
 
 		private List<string> _tableList;
 		private string _provider;
@@ -25,7 +25,7 @@ namespace DbWrapper.Contracts {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Database() {
+		public DynamicDatabase() {
 			Init();
 		}
 
@@ -36,7 +36,7 @@ namespace DbWrapper.Contracts {
 		/// <param name="catalog"></param>
 		/// <param name="username"></param>
 		/// <param name="password"></param>
-		public Database(
+		public DynamicDatabase(
 			string server,
 			string catalog,
 			DatabaseEngine engine,

@@ -11,7 +11,7 @@ namespace DbWrapper.Contracts {
 	public interface IDynamicCommand : IDisposable {
 
 		string Table { get; set; }
-		Database Database { get; set; }
+		DynamicDatabase Database { get; set; }
 		List<WhereClause> Clauses { get; set; }
 		Dictionary<string, Join> Joins { get; set; }
 		char[] EscapeCharacters { get; }

@@ -59,7 +59,7 @@ namespace DbWrapper.Serializer {
 																databaseType,
 																true);
 
-			Database db = new Database(database.Attributes[0].InnerText,
+			DynamicDatabase db = new DynamicDatabase(database.Attributes[0].InnerText,
 									   database.Attributes[1].InnerText,
 									   engine,
 									   database.Attributes[3].InnerText);

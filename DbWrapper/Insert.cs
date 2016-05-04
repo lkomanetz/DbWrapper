@@ -14,7 +14,7 @@ namespace DbWrapper {
 			_records = recs;
 		}
 
-		public Insert(Record rec, string table, Database db) : base(db) {
+		public Insert(Record rec, string table, DynamicDatabase db) : base(db) {
 			_record = rec;
 			_records = new Record[] { rec };
 			_table = table;

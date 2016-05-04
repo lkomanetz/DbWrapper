@@ -10,7 +10,7 @@ namespace DbWrapper {
 
 	public class Update : Command {
 
-		public Update(Record rec, string table, Database db) : base(db) {
+		public Update(Record rec, string table, DynamicDatabase db) : base(db) {
 			_record = rec;
 			_table = table;
 		}

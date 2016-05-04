@@ -20,7 +20,7 @@ namespace DbWrapper {
 		protected OdbcCommand _command;    // Single SQL command built with SQL Parameters
 		protected string _table;      // Table that determines where the query is executed
 		protected StringBuilder _commandStr; // Generated SQL command
-		protected Database _db;         // Database object for opening/closing connections
+		protected DynamicDatabase _db;         // Database object for opening/closing connections
 		protected Hashtable _columnList; // List of columns for designated table and data types
 		protected Record _record;
 
@@ -48,7 +48,7 @@ namespace DbWrapper {
 		/// into the constructor
 		/// </summary>
 		/// <param name="db"></param>
-		public Command(Database db) 
+		public Command(DynamicDatabase db) 
 			: this() {
 			_db = db;
 		}
@@ -67,7 +67,7 @@ namespace DbWrapper {
 		/// <summary>
 		/// Gets and sets the Database object
 		/// </summary>
-		public Database Database {
+		public DynamicDatabase Database {
 			get { return this._db; }
 			set { this._db = value; }
 		}
@@ -115,7 +115,7 @@ namespace DbWrapper {
 				_commandStr = new StringBuilder();
 			}
 
-			_columnList = Database.GetColumnsFor(_table);
+			_columnList = DynamicDatabase.GetColumnsFor(_table);
 		}
 
 		/// <summary>
@@ -483,8 +483,8 @@ namespace DbWrapper {
 			try {
 				using (OdbcDataAdapter da = new OdbcDataAdapter(_command)) {
 					_db.Open();
-					_command.Connection = Database.Connection;
-					trans = Database.Connection.BeginTransaction();
+					_command.Connection = DynamicDatabase.Connection;
+					trans = DynamicDatabase.Connection.BeginTransaction();
 					_command.Transaction = trans;
 					da.Fill(ds);
 					trans.Commit();
