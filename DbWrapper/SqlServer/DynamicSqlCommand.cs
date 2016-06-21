@@ -32,7 +32,7 @@ namespace DbWrapper.SqlServer {
 
 		public List<WhereClause> Clauses { get; set; }
 		public DynamicDatabase Database { get; set; }
-		public char[] EscapeCharacters { get; }
+		public char[] EscapeCharacters { get; private set; }
 		public Dictionary<string, Join> Joins { get; set; }
 		public string Table { get; set; }
 

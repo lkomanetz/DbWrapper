@@ -54,6 +54,7 @@
     <Compile Include="Serializer\RecordSerializer.cs" />
     <Compile Include="SqlServer\DynamicSqlCommand.cs" />
     <Compile Include="SqlServer\DynamicSqlQuery.cs" />
+    <Compile Include="SqlServer\DynamicSqlUpdate.cs" />
     <Compile Include="Update.cs" />
   </ItemGroup>
   <ItemGroup>
