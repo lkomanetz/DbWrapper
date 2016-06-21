@@ -30,6 +30,8 @@ namespace DbWrapper.SqlServer {
 			base.CreateCTESection();
 			_commandStr.Append("SELECT ");
 
+			// This loop creates the columns to return in the following format:
+			// <Table>.[<ColumnName>]
 			short i = 0;
 			int endOfList = _columnList.Count - 1;
 			foreach(object columnName in _columnList.Keys) {
