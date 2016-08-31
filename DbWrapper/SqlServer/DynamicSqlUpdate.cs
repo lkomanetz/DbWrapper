@@ -8,9 +8,11 @@ namespace DbWrapper.SqlServer {
 
 	public class DynamicSqlUpdate : DynamicSqlCommand {
 
+		private Record _record;
+
 		public DynamicSqlUpdate(Record rec, string table, DynamicDatabase db)
 			: base(db) {
-
+			_record = rec;
 		}
 
 		public override void CreateCommand() {
@@ -35,9 +37,11 @@ namespace DbWrapper.SqlServer {
 				string clauseStr = String.Format(
 					"{0}/=/{1}",
 					Record.SearchProperty,
-					this.Re)
+					_record.Properties[Record.SearchProperty]
+				);
 			}
 		}
+
 	}
 
 }

@@ -52,8 +52,8 @@ namespace DbWrapper.SqlServer {
 			return _command.CommandText;
 		}
 
-		protected abstract void CreateWhereSection(); 
-		protected abstract void CreateJoinSection(); 
+		protected abstract void AppendWhereSection(); 
+		protected abstract void AppendJoinSection(); 
 
 		public virtual void CreateCommand() {
 			if (_command == null) {
@@ -100,7 +100,7 @@ namespace DbWrapper.SqlServer {
 			throw new NotImplementedException();
 		}
 
-		internal void CreateCTESection() {
+		internal void AppendCTESection() {
 			// Get the total number of records in the table
 			_commandStr.AppendFormat("SELECT COUNT(*) AS RecordCount\n" +
 									"FROM [{0}];\n\n", this.Table);
@@ -135,7 +135,7 @@ namespace DbWrapper.SqlServer {
 				firstCol
 			);
 			_commandStr.AppendFormat("FROM [{0}]", this.Table);
-			CreateCTEJoinSection();
+			AppendCTEJoinSection();
 			CreateCTEWhereSection();
 
 			_commandStr.Append("\n)\n");
@@ -168,7 +168,7 @@ namespace DbWrapper.SqlServer {
 			return parameter;
 		}
 
-		private void CreateCTEJoinSection() {
+		private void AppendCTEJoinSection() {
 			string joinStr = "\n\t{3} JOIN {1}{0}{2}";
 
 			foreach (var kvp in this.Joins) {

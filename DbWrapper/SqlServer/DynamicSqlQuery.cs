@@ -1,6 +1,7 @@
 ﻿using DbWrapper.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Linq;
 using System.Text;
 
@@ -27,7 +28,7 @@ namespace DbWrapper.SqlServer {
 			base.CreateCommand();
 			string table = this.Table + "Tbl";
 
-			base.CreateCTESection();
+			base.AppendCTESection();
 			_commandStr.Append("SELECT ");
 
 			// This loop creates the columns to return in the following format:
@@ -62,13 +63,13 @@ namespace DbWrapper.SqlServer {
 			}
 
 			_commandStr.Append("FROM " + table);
-			this.CreateJoinSection();
-			this.CreateWhereSection();
+			this.AppendJoinSection();
+			this.AppendWhereSection();
 
 			_command.CommandText = _commandStr.ToString();
 		}
 
-		protected override void CreateJoinSection() {
+		protected override void AppendJoinSection() {
 			string joinStr = "\n\t{3} JOIN {1}{0}{2}";
 			string joinTypeStr = String.Empty;
 
@@ -95,7 +96,7 @@ namespace DbWrapper.SqlServer {
 			}
 		}
 
-		protected override void CreateWhereSection() {
+		protected override void AppendWhereSection() {
 			if (this.Clauses == null || this.Clauses.Count == 0) {
 				_commandStr.AppendFormat(
 					" WHERE (RowNumber >= {0} AND\n\tRowNumber <= {1})",
@@ -106,6 +107,54 @@ namespace DbWrapper.SqlServer {
 				return;
 			}
 
+			for (short i = 0; i < this.Clauses.Count; i++) {
+				WhereClause clause = this.Clauses[i];
+				OdbcParameter param = BuildParameter(ref clause, $"W{i}");
+				string table = GetTable(clause);
+				string clauseStr = String.Empty;
+				string formattedStr = String.Empty;
+
+				if (clause.Type == ClauseType.And ||
+					clause.Type == ClauseType.Or) {
+
+					clauseStr = (clause.Type == ClauseType.And) ? "AND" : "OR";
+				}
+
+
+				if (String.IsNullOrEmpty(clauseStr)) {
+					_commandStr.AppendFormat(
+						"{3}{0}{4}.{3}{1}{4} {2} ?",
+						table,
+						clause.Column,
+						clause.Operator,
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					);
+				}
+				else {
+					_commandStr.AppendFormat(
+						"{0}.{4}{1}{5} {2} ? {3}\n\t",
+						table,
+						clause.Column,
+						clause.Operator,
+						"AND",
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					);
+				}
+
+				_command.Parameters.Add(param);
+			}
+			_commandStr.Append(")");
+
+			if (this.RowStart != 0 && this.RowEnd != 0) {
+				_commandStr.Append($" AND\n\t(RowNumber >= {this.RowStart} AND\n\tRowNumber <= {this.RowEnd})");
+			}
+		}
+
+		private string GetTable(WhereClause clause) {
+			string tableName = String.IsNullOrEmpty(clause.Table) ? this.Table : clause.Table;
+			return $"{tableName}Tbl";
 		}
 
 	}

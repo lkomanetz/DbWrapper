@@ -1,6 +1,8 @@
 .vs/
 *.vssscc
-DbWrapper/bin
+DbWrapper/bin/
 DbWrapper/obj/
+DbWrapper.Contracts/[Bb]in/
+DbWrapper.Extensions/[Oo]bj/
 TestApp/obj
 TestApp/bin
