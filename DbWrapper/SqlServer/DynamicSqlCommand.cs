@@ -53,9 +53,9 @@ namespace DbWrapper.SqlServer {
 		}
 
 		protected abstract void AppendWhereSection(); 
-		protected abstract void AppendJoinSection(); 
+		protected virtual void AppendJoinSection() { }
 
-		public virtual void CreateCommand() {
+		public virtual void InitializeCommand() {
 			if (_command == null) {
 				_command = new OdbcCommand();
 			}

@@ -24,8 +24,8 @@ namespace DbWrapper.SqlServer {
 			get { return this.RowStart + PageSize - 1; }
 		}
 
-		public override void CreateCommand() {
-			base.CreateCommand();
+		public override void InitializeCommand() {
+			base.InitializeCommand();
 			string table = this.Table + "Tbl";
 
 			base.AppendCTESection();
@@ -111,17 +111,17 @@ namespace DbWrapper.SqlServer {
 				WhereClause clause = this.Clauses[i];
 				OdbcParameter param = BuildParameter(ref clause, $"W{i}");
 				string table = GetTable(clause);
-				string clauseStr = String.Empty;
+				string clauseTypeStr = String.Empty;
 				string formattedStr = String.Empty;
 
 				if (clause.Type == ClauseType.And ||
 					clause.Type == ClauseType.Or) {
 
-					clauseStr = (clause.Type == ClauseType.And) ? "AND" : "OR";
+					clauseTypeStr = (clause.Type == ClauseType.And) ? "AND" : "OR";
 				}
 
 
-				if (String.IsNullOrEmpty(clauseStr)) {
+				if (String.IsNullOrEmpty(clauseTypeStr)) {
 					_commandStr.AppendFormat(
 						"{3}{0}{4}.{3}{1}{4} {2} ?",
 						table,
@@ -137,7 +137,7 @@ namespace DbWrapper.SqlServer {
 						table,
 						clause.Column,
 						clause.Operator,
-						"AND",
+						clauseTypeStr,
 						EscapeCharacters[0],
 						EscapeCharacters[1]
 					);

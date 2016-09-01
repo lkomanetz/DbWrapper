@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data;
+using System.Data.Odbc;
 using System.Text.RegularExpressions;
 
 namespace DbWrapper.Contracts {
@@ -22,6 +24,7 @@ namespace DbWrapper.Contracts {
 		public WhereClause(
 			string clause,
 			string table = "",
+			Type valueType = null,
 			ClauseType type = ClauseType.And
 		) {
 			_clause = clause;
@@ -30,27 +33,7 @@ namespace DbWrapper.Contracts {
 			_column = String.Empty;
 			_clauseOperator = String.Empty;
 			_value = null;
-
-			BreakClauseApart();
-		}
-
-		public WhereClause(string clause) :
-			this(clause, "", ClauseType.And) {
-			_clause = clause;
-			_column = String.Empty;
-			_clauseOperator = String.Empty;
-			_value = null;
-
-			BreakClauseApart();
-		}
-
-		public WhereClause(string clause, ClauseType type = ClauseType.And) :
-			this(clause, "", type) {
-			_clause = clause;
-			_type = type;
-			_column = String.Empty;
-			_clauseOperator = String.Empty;
-			_value = null;
+			_dataType = valueType;
 
 			BreakClauseApart();
 		}
@@ -124,5 +107,34 @@ namespace DbWrapper.Contracts {
 			this._clauseOperator = match.Groups[2].Value;
 			this._value = match.Groups[3].Value;
 		}
+
+		public OdbcParameter BuildParameter() {
+			OdbcParameter parameter = new OdbcParameter() {
+				ParameterName = "?",
+				Value = _value
+			};
+
+			if (_dataType != null) {
+				TypeConverter tc = TypeDescriptor.GetConverter(parameter.DbType);
+				if (tc.CanConvertFrom(_dataType)) {
+					parameter.DbType = (DbType)tc.ConvertFrom(_dataType.Name);
+				}
+				else {
+					try {
+						parameter.DbType = (DbType)tc.ConvertFrom(_dataType.Name);
+					}
+					catch {
+						if (_dataType == typeof(byte[])) {
+							parameter.DbType = DbType.Binary;
+							parameter.Size = -1;
+						}
+					}
+				}
+			}
+
+			return parameter;
+		}
+
 	}
+
 }

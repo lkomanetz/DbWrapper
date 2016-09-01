@@ -16,7 +16,7 @@ namespace DbWrapper.Contracts {
 		Dictionary<string, Join> Joins { get; set; }
 		char[] EscapeCharacters { get; }
 
-		void CreateCommand();
+		void InitializeCommand();
 		DataSet Execute();
 		void AddClause(WhereClause clause, ClauseType type = ClauseType.Neither);
 		void AddJoin(Join join, JoinType type = JoinType.Inner);
