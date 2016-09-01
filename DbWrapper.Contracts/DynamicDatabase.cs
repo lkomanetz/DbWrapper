@@ -235,6 +235,10 @@ namespace DbWrapper.Contracts {
 			}
 		}
 
+		private static Type GetCorrespondingType(string userType) {
+			return null;
+		}
+
 		/// <summary>
 		/// Used to initialize the object in all constructor methods
 		/// </summary>

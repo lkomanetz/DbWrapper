@@ -10,6 +10,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading;
 using System.Xml;
+using DbWrapper.SqlServer;
 
 namespace DbWrapper {
 	public enum DbMessage : byte {
@@ -22,7 +23,7 @@ namespace DbWrapper {
 
 		private DynamicDatabase _database;      // Database connection object
 		private Record[] _recordList;    // List of records for when a query returns more than one
-		private Query _query;         // SQL query used for SELECT statements
+		private DynamicSqlQuery _query;         // SQL query used for SELECT statements
 		private String _table;         // SQL table that the commands are pointed to
 		private static String _searchProperty;// Property used for searching when doing Delete or Update
 		private int _page;          // Determines what page the Query should use
@@ -44,7 +45,7 @@ namespace DbWrapper {
 		public Record(string table, DynamicDatabase db) : base() {
 			_database = db;
 			_table = table;
-			_query = new Query(db);
+			_query = new DynamicSqlQuery(db);
 			_page = 1;
 			_recordIndex = -1;
 
@@ -76,15 +77,8 @@ namespace DbWrapper {
 			get { return _database; }
 		}
 
-		public Query Query {
+		public DynamicSqlQuery Query {
 			get { return _query; }
-		}
-
-		/// <summary>
-		/// Determines how many records are to be returned per page
-		/// </summary>
-		public static int PageSize {
-			set { Query.PageSize = value; }
 		}
 
 		/// <summary>
@@ -102,8 +96,7 @@ namespace DbWrapper {
 		/// table and initializes the Record object with null values.
 		/// </summary>
 		private void Initialize() {
-			_query.ColumnList = (Hashtable)DynamicDatabase.Schema[_table];
-			base.PropertyListInfo = _query.ColumnList;
+			base.PropertyListInfo = (Hashtable)DynamicDatabase.Schema[_table];
 			base.IdentityColumns = DynamicDatabase.GetTableConstraints(_table);
 
 			InitializeProperties();
@@ -137,7 +130,7 @@ namespace DbWrapper {
 		private DbMessage GetRecords() {
 			try {
 				_query.Table = _table;
-				_query.CreateCommand();
+				_query.InitializeCommand();
 				_query.CurrentPage = _page;
 
 				//TODO (Logan): Hide dataset details in the Query object.
@@ -151,8 +144,6 @@ namespace DbWrapper {
 
 				_recordList = new Record[dt.Rows.Count];
 				this.FillRecordList(dt);
-				// Now I'm just getting the total number of records returned from the query
-				_query.RecordCount = Convert.ToUInt32(dt.Rows.Count);
 
 				return DbMessage.Success;
 			}
@@ -239,12 +230,16 @@ namespace DbWrapper {
 			string table = "",
 			ClauseType type = ClauseType.Neither
 		) {
-			if (_query == null)
-				_query = new Query(_database);
+			//if (_query == null)
+			//	_query = new Query(_database);
 
-			WhereClause clause = new WhereClause(query, table, type);
+			//WhereClause clause = new WhereClause(query, table, type);
 
-			_query.AddClause(clause, type);
+			//_query.AddClause(clause, type);
+
+			if (_query == null) {
+
+			}
 		}
 
 		/// <summary>
@@ -267,7 +262,7 @@ namespace DbWrapper {
 			JoinType type = JoinType.Inner
 		) {
 			if (_query == null)
-				_query = new Query(_database);
+				_query = new DynamicSqlQuery(_database);
 
 			Join j = new Join() {
 				Table = joinTable,

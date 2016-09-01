@@ -40,7 +40,7 @@ namespace DbWrapper.Remove {
 						_record.Properties[key]
 					);
 
-					clause = new WhereClause(clauseStr, _table, type);
+					clause = new WhereClause(clauseStr, _table, null, type);
 
 					if (_record.Properties[key] != null) {
 						clause.DataType = _record.Properties[key].GetType();
@@ -69,7 +69,7 @@ namespace DbWrapper.Remove {
 					 _record.Properties[property]
 				 );
 
-				clause = new WhereClause(clauseStr, _table, type);
+				clause = new WhereClause(clauseStr, _table, null, type);
 
 				if (_record.Properties[property] != null) {
 					clause.DataType = _record.Properties[property].GetType();

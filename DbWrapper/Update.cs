@@ -58,7 +58,7 @@ namespace DbWrapper {
 					_record.Properties[Record.SearchProperty]
 				);
 
-				WhereClause clause = new WhereClause(clauseStr, _table, ClauseType.Neither);
+				WhereClause clause = new WhereClause(clauseStr, _table, null, ClauseType.Neither);
 				SetClauseDataType(ref clause, Record.SearchProperty);
 				_clauses.Add(clause);
 			}
@@ -76,7 +76,7 @@ namespace DbWrapper {
 						_record.Properties[key]
 					);
 
-					WhereClause clause = new WhereClause(clauseStr, _table, type);
+					WhereClause clause = new WhereClause(clauseStr, _table, null, type);
 					SetClauseDataType(ref clause, key);
 					_clauses.Add(clause);
 					propertyCount++;

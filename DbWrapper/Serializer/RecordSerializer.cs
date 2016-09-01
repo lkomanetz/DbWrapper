@@ -84,7 +84,7 @@ namespace DbWrapper.Serializer {
 				XmlElement property = _xmlDoc.CreateElement("property");
 				property.SetAttribute("Name", key);
 				property.SetAttribute("Value", _record.Properties[key].ToString());
-				property.SetAttribute("Type", _record.Query.ColumnList[key].ToString());
+				property.SetAttribute("Type", _record.Properties[key].GetType().ToString());
 
 				properties.AppendChild(property);
 			}
@@ -215,7 +215,7 @@ namespace DbWrapper.Serializer {
 
 			// Create the XML elements for each column
 			XmlElement columns = _xmlDoc.CreateElement("columns");
-			foreach (string key in _record.Query.ColumnList.Keys) {
+			foreach (string key in _record.Properties.Keys) {
 				XmlElement column = _xmlDoc.CreateElement("column");
 				column.SetAttribute("Name", key);
 				columns.AppendChild(column);

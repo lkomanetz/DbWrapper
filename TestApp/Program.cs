@@ -17,37 +17,21 @@ namespace TestApp
 	{
 		static void Main(string[] args)
 		{
-			//Database db = new Database("208.107.242.5",
-			//						   "videostore",
-			//						   DatabaseEngine.MySQL,
-			//						   "lkomanetz",
-			//						   "K0manetz3");
-
-			//Record.SearchProperty = "Title";
-			//Record rec = new Record("inventory", db);
-			//rec.AddQuery("Title/=/Test");
+			DynamicDatabase db = new DynamicDatabase(
+				"10.228.16.22",
+				"lk_core",
+				DatabaseEngine.SqlServer,
+				"sa",
+				"supersecret2"
+			);
+			//Record rec = new Record("Requests", db);
+			//rec.AddQuery("ID/=/2", "Users");
 			//rec.AddJoin("Users",
 			//			"ID",
 			//			"CreatedBy",
 			//			JoinType.Inner);
 			//rec.Read();
-
-			//if (rec.Next()) {
-			//	Console.WriteLine(rec.Get<string>("Title"));
-			//}
-			DynamicDatabase db = new DynamicDatabase("140.186.94.50",
-										"FusionDB",
-										DatabaseEngine.SqlServer,
-										"Fusion_SA",
-										"Passw0rd");
-			Record rec = new Record("Requests", db);
-			rec.AddQuery("ID/=/2", "Users");
-			rec.AddJoin("Users",
-						"ID",
-						"CreatedBy",
-						JoinType.Inner);
-			rec.Read();
-			Console.ReadLine();
+			//Console.ReadLine();
 		//    TimeSpan elapsedTime = new TimeSpan();
 
 		//    for (short i = 0; i < 50; i++)
