@@ -52,7 +52,84 @@ namespace DbWrapper.SqlServer {
 			return _command.CommandText;
 		}
 
-		protected abstract void AppendWhereSection(); 
+		protected virtual void AppendWhereSection() {
+			_commandStr.Append("\nWHERE (");
+			for (short i = 0; i < this.Clauses.Count; i++) {
+				string clauseTypeStr = String.Empty;
+
+				if (this.Clauses[i].Type == ClauseType.And ||
+					this.Clauses[i].Type == ClauseType.Or) {
+
+					clauseTypeStr = (this.Clauses[i].Type == ClauseType.And) ? "AND" : "OR";
+				}
+
+				if (String.IsNullOrEmpty(clauseTypeStr)) {
+					_commandStr.AppendFormat(
+						"{3}{0}{4}.{3}{1}{4} {2} ?",
+						this.Table,
+						this.Clauses[i].Column,
+						this.Clauses[i].Operator,
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					);
+				}
+				else {
+					_commandStr.AppendFormat(
+						"{0}.{4}{1}{5} {2} ? {3}\n\t",
+						this.Table,
+						this.Clauses[i].Column,
+						this.Clauses[i].Operator,
+						clauseTypeStr,
+						EscapeCharacters[0],
+						EscapeCharacters[1]
+					);
+				}
+				_command.Parameters.Add(this.Clauses[i].BuildParameter());
+			}
+			_commandStr.Append(")");
+		}
+
+		protected void CreateNeededClauses(Record record) {
+			if (!String.IsNullOrEmpty(Record.SearchProperty)) {
+				WhereClause clause = new WhereClause(
+					$"{Record.SearchProperty}/=/{record.Properties[Record.SearchProperty]}",
+					this.Table,
+					record.Properties[Record.SearchProperty].GetType(),
+					ClauseType.Neither
+				);
+
+				OdbcParameter param = BuildParameter(ref clause, $"W0");
+				_commandStr.AppendFormat(
+					"WHERE ({3}{0}{4}.{3}{1}{4} {2} ?)",
+					this.Table,
+					clause.Column,
+					clause.Operator,
+					EscapeCharacters[0],
+					EscapeCharacters[1]
+				);
+
+				this.Clauses.Add(clause);
+			}
+
+			int propertyCount = 0;
+			foreach (var key in record.Properties.Keys) {
+				ClauseType type = ClauseType.Neither;
+				if (propertyCount < record.Properties.Count - 1) {
+					type = ClauseType.And;
+				}
+
+				string clauseStr = $"{key}/=/{record.Properties[key]}";
+				WhereClause clause = new WhereClause(clauseStr,
+					this.Table,
+					record.Properties[key].GetType(),
+					type
+				);
+				this.Clauses.Add(clause);
+				propertyCount++;
+			}
+
+		}
+
 		protected virtual void AppendJoinSection() { }
 
 		public virtual void InitializeCommand() {
