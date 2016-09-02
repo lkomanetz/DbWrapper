@@ -99,7 +99,7 @@ namespace DbWrapper.SqlServer {
 		protected override void AppendWhereSection() {
 			if (this.Clauses == null || this.Clauses.Count == 0) {
 				_commandStr.AppendFormat(
-					" WHERE (RowNumber >= {0} AND\n\tRowNumber <= {1})",
+					"\nWHERE (RowNumber >= {0} AND\n\tRowNumber <= {1})",
 					this.RowStart,
 					this.RowEnd
 				);
