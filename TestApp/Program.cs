@@ -38,6 +38,7 @@ namespace TestApp
 				Console.WriteLine(rec.Get<String>("IssueDescription"));
 			}
 			Console.ReadLine();
+
 			//    TimeSpan elapsedTime = new TimeSpan();
 
 			//    for (short i = 0; i < 50; i++)
