@@ -137,17 +137,13 @@ namespace DbWrapper {
 				DataSet ds = _query.Execute();
 				DataTable dt = null;
 
-				if (_database.Engine == DatabaseEngine.SqlServer)
-					dt = ds.Tables[1];
-				else if (_database.Engine == DatabaseEngine.MySQL)
-					dt = ds.Tables[0];
-
+				dt = ds.Tables[0];
 				_recordList = new Record[dt.Rows.Count];
 				this.FillRecordList(dt);
 
 				return DbMessage.Success;
 			}
-			catch {
+			catch (Exception err) {
 				return DbMessage.Failed;
 			}
 		}

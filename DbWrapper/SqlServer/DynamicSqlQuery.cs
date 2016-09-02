@@ -14,7 +14,7 @@ namespace DbWrapper.SqlServer {
 			: base(db) { }
 
 		public int CurrentPage { get; set; }
-		public static int PageSize { get; set; }
+		public static int PageSize => 1000;
 
 		public int RowStart {
 			get { return PageSize * this.CurrentPage + 1; }
@@ -86,7 +86,7 @@ namespace DbWrapper.SqlServer {
 
 				_commandStr.AppendFormat(
 					"\n\t\tON {0}.{4}{1}{5} = {4}{2}{5}.{4}{3}{5}",
-					join.Table + "Tbl",
+					this.Table + "Tbl",
 					join.Column,
 					join.Table,
 					join.JoinColumn,

@@ -18,7 +18,7 @@ namespace TestApp
 		static void Main(string[] args)
 		{
 			DynamicDatabase db = new DynamicDatabase(
-				"192.168.1.110",
+				"140.186.94.50",
 				"FusionDB",
 				DatabaseEngine.SqlServer,
 				"Fusion_SA",

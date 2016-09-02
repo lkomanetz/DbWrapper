@@ -174,13 +174,14 @@ namespace DbWrapper.SqlServer {
 				transaction = null;
 				this.Database.Close();
 			}
-			throw new NotImplementedException();
+
+			return ds;
 		}
 
 		internal void AppendCTESection() {
 			// Get the total number of records in the table
-			_commandStr.AppendFormat("SELECT COUNT(*) AS RecordCount\n" +
-									"FROM [{0}];\n\n", this.Table);
+			//_commandStr.AppendFormat("SELECT COUNT(*) AS RecordCount\n" +
+			//						"FROM [{0}];\n\n", this.Table);
 
 			/*
 			 * This WITH statement returns the number of rows in the table.
