@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command.cs" />
     <Compile Include="Remove\Delete.cs" />
     <Compile Include="FlexObject.cs" />
     <Compile Include="Insert.cs" />

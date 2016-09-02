@@ -107,9 +107,11 @@ namespace DbWrapper.SqlServer {
 				return;
 			}
 
+			_commandStr.Append("\nWHERE ");
+
 			for (short i = 0; i < this.Clauses.Count; i++) {
 				WhereClause clause = this.Clauses[i];
-				OdbcParameter param = BuildParameter(ref clause, $"W{i}");
+				OdbcParameter param = clause.BuildParameter();
 				string table = GetTable(clause);
 				string clauseTypeStr = String.Empty;
 				string formattedStr = String.Empty;
@@ -145,7 +147,6 @@ namespace DbWrapper.SqlServer {
 
 				_command.Parameters.Add(param);
 			}
-			_commandStr.Append(")");
 
 			if (this.RowStart != 0 && this.RowEnd != 0) {
 				_commandStr.Append($" AND\n\t(RowNumber >= {this.RowStart} AND\n\tRowNumber <= {this.RowEnd})");

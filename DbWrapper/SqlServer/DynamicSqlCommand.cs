@@ -92,13 +92,13 @@ namespace DbWrapper.SqlServer {
 		protected void CreateNeededClauses(Record record) {
 			if (!String.IsNullOrEmpty(Record.SearchProperty)) {
 				WhereClause clause = new WhereClause(
-					$"{Record.SearchProperty}/=/{record.Properties[Record.SearchProperty]}",
-					this.Table,
-					record.Properties[Record.SearchProperty].GetType(),
-					ClauseType.Neither
+					Record.SearchProperty,
+					"=",
+					record.Properties[Record.SearchProperty],
+					record.Table
 				);
 
-				OdbcParameter param = BuildParameter(ref clause, $"W0");
+				OdbcParameter param = clause.BuildParameter();
 				_commandStr.AppendFormat(
 					"WHERE ({3}{0}{4}.{3}{1}{4} {2} ?)",
 					this.Table,
@@ -118,11 +118,11 @@ namespace DbWrapper.SqlServer {
 					type = ClauseType.And;
 				}
 
-				string clauseStr = $"{key}/=/{record.Properties[key]}";
-				WhereClause clause = new WhereClause(clauseStr,
-					this.Table,
-					record.Properties[key].GetType(),
-					type
+				WhereClause clause = new WhereClause(
+					key.ToString(),
+					"=",
+					record.Properties[key],
+					record.Table
 				);
 				this.Clauses.Add(clause);
 				propertyCount++;
@@ -290,7 +290,7 @@ namespace DbWrapper.SqlServer {
 			_commandStr.Append("\nWHERE (");
 			for (short i = 0; i < this.Clauses.Count; i++) {
 				WhereClause clause = this.Clauses[i];
-				OdbcParameter param = BuildParameter(ref clause, "W" + Convert.ToString(i));
+				OdbcParameter param = clause.BuildParameter();
 				param.RemoveIllegalCharacters();
 				_command.Parameters.Add(param);
 

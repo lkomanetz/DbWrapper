@@ -25,12 +25,18 @@ namespace TestApp
 				"Passw0rd"
 			);
 			Record rec = new Record("Requests", db);
-			rec.AddQuery("ID/=/2", "Users");
-			rec.AddJoin("Users",
-						"ID",
-						"CreatedBy",
-						JoinType.Inner);
+			rec.AddQuery("CreatedBy", "=", 2);
+			rec.AddJoin(
+				"Users",
+				"ID",
+				"CreatedBy",
+				JoinType.Inner
+			);
 			rec.Read();
+
+			while (rec.Next()) {
+				Console.WriteLine(rec.Get<String>("IssueDescription"));
+			}
 			Console.ReadLine();
 			//    TimeSpan elapsedTime = new TimeSpan();
 

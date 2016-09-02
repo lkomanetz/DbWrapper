@@ -3,5 +3,3 @@ C:\Code\DbWrapper\DbWrapper.Contracts\bin\Debug\DbWrapper.Contracts.pdb
 C:\Code\DbWrapper\DbWrapper.Contracts\obj\Debug\DbWrapper.Contracts.csprojResolveAssemblyReference.cache
 C:\Code\DbWrapper\DbWrapper.Contracts\obj\Debug\DbWrapper.Contracts.dll
 C:\Code\DbWrapper\DbWrapper.Contracts\obj\Debug\DbWrapper.Contracts.pdb
-C:\code\DbWrapper\DbWrapper.Contracts\bin\Debug\System.Net.Http.dll
-C:\code\DbWrapper\DbWrapper.Contracts\bin\Debug\System.Net.Http.xml

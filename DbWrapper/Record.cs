@@ -222,20 +222,22 @@ namespace DbWrapper {
 		/// <param name="query"></param>
 		/// <param name="type"></param>
 		public void AddQuery(
-			string query,
+			string column,
+			string queryOperator,
+			object value,
 			string table = "",
 			ClauseType type = ClauseType.Neither
 		) {
-			//if (_query == null)
-			//	_query = new Query(_database);
-
-			//WhereClause clause = new WhereClause(query, table, type);
-
-			//_query.AddClause(clause, type);
-
 			if (_query == null) {
-
+				_query = new DynamicSqlQuery(_database);
 			}
+
+			if (String.IsNullOrEmpty(table)) {
+				table = this.Table;
+			}
+
+			WhereClause clause = new WhereClause(column, queryOperator, value, table, type);
+			_query.AddClause(clause);
 		}
 
 		/// <summary>
@@ -312,42 +314,21 @@ namespace DbWrapper {
 		/// </summary>
 		/// <returns></returns>
 		public DbMessage Remove() {
-			try {
-				Delete deleteObj = new Delete(this, _table, _database);
-				deleteObj.CreateCommand();
-				deleteObj.Execute();
-
-				return DbMessage.Success;
-			}
-			catch {
-				return DbMessage.Failed;
-			}
+			throw new NotImplementedException();
 		}
 		/// <summary>
 		/// Updates records within the record list.
 		/// </summary>
 		/// <returns></returns>
 		public DbMessage Update() {
-			Update updt = new Update(this, _table, _database);
-			updt.CreateCommand();
-			updt.Execute();
-			return DbMessage.Success;
+			throw new NotImplementedException();
 		}
 		/// <summary>
 		/// Creates the record object into database.
 		/// </summary>
 		/// <returns></returns>
 		public DbMessage Create() {
-			try {
-				Insert insert = new Insert(this, _table, _database);
-				insert.CreateCommand();
-				insert.Execute();
-				return DbMessage.Success;
-			}
-			catch {
-				return DbMessage.Failed;
-			}
-
+			throw new NotImplementedException();
 		}
 		/// <summary>
 		/// Checks if column is in the list of TableConstraintInfo objects

@@ -3,27 +3,12 @@ using namespace NewCodeStyleSample {
 	public class Program {
 		
 		public static void Main(string[] args) {
-			DynamicDatabase db = new DynamicDatabase(
-				"connectionString",
-				SqlEngine.SqlServer,
-				"username",
-				"password"
-			);
-
-			db.WithTable("records")
-				.Where("<column>", "<operator>", value)
-				.And("<column>", "<operator>", value)
-				.Or("<column>", "<operator>", value)
-				.JoinOn("users", JoinType.Inner, 
-
+			Record rec = new Record("records", db);
+			rec.AddQuery("SysId", "=", 1, ClauseType.And);
+			rec.AddQuery("Users.UserId", "=", "lkomanetz");
 		}
 
 	}
 
-	public class DynamicDatabase {
-
-		public abstract DynamicTable WithTable(string tableName);
-
-	}
 
 }

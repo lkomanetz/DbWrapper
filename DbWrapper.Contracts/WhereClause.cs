@@ -22,20 +22,18 @@ namespace DbWrapper.Contracts {
 		private object _value;
 
 		public WhereClause(
-			string clause,
-			string table = "",
-			Type valueType = null,
-			ClauseType type = ClauseType.And
-		) {
-			_clause = clause;
-			_table = table;
-			_type = type;
-			_column = String.Empty;
-			_clauseOperator = String.Empty;
-			_value = null;
-			_dataType = valueType;
+			string column,
+			string clauseOperator,
+			object value,
+			string table,
+			ClauseType type = ClauseType.Neither) {
 
-			BreakClauseApart();
+			_column = column;
+			_clauseOperator = clauseOperator;
+			_value = value;
+			_type = type;
+			_table = table;
+			this.DataType = value.GetType();
 		}
 
 		/// <summary>
@@ -61,7 +59,7 @@ namespace DbWrapper.Contracts {
 
 		public Type DataType {
 			get { return this._dataType; }
-			set { this._dataType = value; }
+			private set { this._dataType = value; }
 		}
 
 		/// <summary>

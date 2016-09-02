@@ -55,8 +55,7 @@ namespace DbWrapper.SqlServer {
 					continue;
 				}
 
-				string clauseStr = $"{key}/=/{_record.Properties[key]}";
-				WhereClause clause = new WhereClause(clauseStr, "", _record.Properties[key].GetType());
+				WhereClause clause = new WhereClause(key.ToString(), "=", _record.Properties[key], _record.Table);
 				OdbcParameter param = clause.BuildParameter();
 
 				if (i != _record.Properties.Count - 1) {
