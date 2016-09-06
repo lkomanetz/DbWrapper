@@ -122,7 +122,8 @@ namespace DbWrapper.SqlServer {
 					key.ToString(),
 					"=",
 					record.Properties[key],
-					record.Table
+					record.Table,
+					type
 				);
 				this.Clauses.Add(clause);
 				propertyCount++;

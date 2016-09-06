@@ -14,14 +14,14 @@ namespace DbWrapper.SqlServer {
 			: base(db) { }
 
 		public int CurrentPage { get; set; }
-		public static int PageSize => 1000;
+		public static int RecordsPerPage => 1000;
 
 		public int RowStart {
-			get { return PageSize * this.CurrentPage + 1; }
+			get { return RecordsPerPage * this.CurrentPage + 1; }
 		}
 
 		public int RowEnd {
-			get { return this.RowStart + PageSize - 1; }
+			get { return this.RowStart + RecordsPerPage - 1; }
 		}
 
 		public override void InitializeCommand() {
@@ -107,6 +107,11 @@ namespace DbWrapper.SqlServer {
 				return;
 			}
 
+			/*
+			 * The only reason why I'm overriding this method is because the table names in the Where section
+			 * need to have 'Tbl' appended at the end of the this.Table property.  Right now I can't think of
+			 * a cleaner way to do this since it's basically duplicate code from DynamicSqlCommand.AppendWhereSection()
+			 */
 			_commandStr.Append("\nWHERE ");
 
 			for (short i = 0; i < this.Clauses.Count; i++) {
@@ -114,7 +119,6 @@ namespace DbWrapper.SqlServer {
 				OdbcParameter param = clause.BuildParameter();
 				string table = GetTable(clause);
 				string clauseTypeStr = String.Empty;
-				string formattedStr = String.Empty;
 
 				if (clause.Type == ClauseType.And ||
 					clause.Type == ClauseType.Or) {
