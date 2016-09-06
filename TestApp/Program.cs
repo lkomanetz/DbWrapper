@@ -25,7 +25,7 @@ namespace TestApp
 				"Passw0rd"
 			);
 			Record rec = new Record("Requests", db);
-			rec.AddQuery("CreatedBy", "=", 2);
+			rec.AddQuery("ID", "=", 2, "Users");
 			rec.AddJoin(
 				"Users",
 				"ID",
