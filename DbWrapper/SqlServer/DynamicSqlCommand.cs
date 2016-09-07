@@ -98,17 +98,8 @@ namespace DbWrapper.SqlServer {
 					record.Table
 				);
 
-				OdbcParameter param = clause.BuildParameter();
-				_commandStr.AppendFormat(
-					"WHERE ({3}{0}{4}.{3}{1}{4} {2} ?)",
-					this.Table,
-					clause.Column,
-					clause.Operator,
-					EscapeCharacters[0],
-					EscapeCharacters[1]
-				);
-
 				this.Clauses.Add(clause);
+				return;
 			}
 
 			int propertyCount = 0;

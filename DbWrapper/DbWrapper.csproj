@@ -53,6 +53,7 @@
     <Compile Include="Serializer\RecordSerializer.cs" />
     <Compile Include="SqlServer\DynamicSqlCommand.cs" />
     <Compile Include="SqlServer\DynamicSqlDelete.cs" />
+    <Compile Include="SqlServer\DynamicSqlInsert.cs" />
     <Compile Include="SqlServer\DynamicSqlQuery.cs" />
     <Compile Include="SqlServer\DynamicSqlUpdate.cs" />
     <Compile Include="Update.cs" />

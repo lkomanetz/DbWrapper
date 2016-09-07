@@ -314,21 +314,68 @@ namespace DbWrapper {
 		/// </summary>
 		/// <returns></returns>
 		public DbMessage Remove() {
-			throw new NotImplementedException();
+			try {
+				IDynamicCommand cmd = null;
+				switch (_database.Engine)
+				{
+					case DatabaseEngine.SqlServer:
+						cmd = new DynamicSqlDelete(this, _table, _database);
+						break;
+				}
+				cmd.InitializeCommand();
+				cmd.Execute();
+				return DbMessage.Success;
+			}
+			catch (Exception err) {
+				return DbMessage.Failed;
+			}
 		}
 		/// <summary>
 		/// Updates records within the record list.
 		/// </summary>
 		/// <returns></returns>
 		public DbMessage Update() {
-			throw new NotImplementedException();
+			try
+			{
+				IDynamicCommand cmd = null;
+				switch (_database.Engine)
+				{
+					case DatabaseEngine.SqlServer:
+						cmd = new DynamicSqlUpdate(this, _table, _database);
+						break;
+				}
+
+				cmd.InitializeCommand();
+				cmd.Execute();
+				return DbMessage.Success;
+			}
+			catch (Exception err)
+			{
+				return DbMessage.Failed;
+			}
 		}
 		/// <summary>
 		/// Creates the record object into database.
 		/// </summary>
 		/// <returns></returns>
 		public DbMessage Create() {
-			throw new NotImplementedException();
+			try
+			{
+				IDynamicCommand cmd = null;
+				switch (_database.Engine)
+				{
+					case DatabaseEngine.SqlServer:
+						cmd = new DynamicSqlInsert(this, _table, _database);
+						break;
+				}
+				cmd.InitializeCommand();
+			}
+			catch (Exception err)
+			{
+				return DbMessage.Failed;
+			}
+
+			return DbMessage.Success;
 		}
 		/// <summary>
 		/// Checks if column is in the list of TableConstraintInfo objects

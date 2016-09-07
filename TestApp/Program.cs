@@ -24,6 +24,7 @@ namespace TestApp
 				"Fusion_SA",
 				"Passw0rd"
 			);
+			//Record.SearchProperty = "ID";
 			Record rec = new Record("Requests", db);
 			rec.AddQuery("ID", "=", 2, "Users", ClauseType.Or);
 			rec.AddQuery("UpdatedBy", "<>", 0);
@@ -37,6 +38,7 @@ namespace TestApp
 
 			while (rec.Next()) {
 				Console.WriteLine(rec.Get<String>("IssueDescription"));
+				rec.Create();
 			}
 			Console.ReadLine();
 
