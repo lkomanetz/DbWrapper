@@ -316,8 +316,9 @@ namespace DbWrapper.SqlServer {
 						EscapeCharacters[1]
 					);
 				}
-				_commandStr.Append(")");
 			}
+
+			_commandStr.Append(")");
 		}
 
 	}

@@ -112,7 +112,7 @@ namespace DbWrapper.SqlServer {
 			 * need to have 'Tbl' appended at the end of the this.Table property.  Right now I can't think of
 			 * a cleaner way to do this since it's basically duplicate code from DynamicSqlCommand.AppendWhereSection()
 			 */
-			_commandStr.Append("\nWHERE ");
+			_commandStr.Append("\nWHERE (");
 
 			for (short i = 0; i < this.Clauses.Count; i++) {
 				WhereClause clause = this.Clauses[i];
@@ -152,14 +152,15 @@ namespace DbWrapper.SqlServer {
 				_command.Parameters.Add(param);
 			}
 
+			_commandStr.Append(")");
+
 			if (this.RowStart != 0 && this.RowEnd != 0) {
 				_commandStr.Append($" AND\n\t(RowNumber >= {this.RowStart} AND\n\tRowNumber <= {this.RowEnd})");
 			}
 		}
 
 		private string GetTable(WhereClause clause) {
-			string tableName = String.IsNullOrEmpty(clause.Table) ? this.Table : clause.Table;
-			return $"{tableName}Tbl";
+			return String.IsNullOrEmpty(clause.Table) ? clause.Table : $"{this.Table}Tbl";
 		}
 
 	}

@@ -25,7 +25,8 @@ namespace TestApp
 				"Passw0rd"
 			);
 			Record rec = new Record("Requests", db);
-			rec.AddQuery("ID", "=", 2, "Users");
+			rec.AddQuery("ID", "=", 2, "Users", ClauseType.Or);
+			rec.AddQuery("UpdatedBy", "<>", 0);
 			rec.AddJoin(
 				"Users",
 				"ID",
