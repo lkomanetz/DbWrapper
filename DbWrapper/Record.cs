@@ -369,6 +369,7 @@ namespace DbWrapper {
 						break;
 				}
 				cmd.InitializeCommand();
+				cmd.Execute();
 			}
 			catch (Exception err)
 			{
